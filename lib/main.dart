@@ -1,27 +1,108 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+   // ============================
+  // DATA BARANG
+  // ============================
   String namaBarang = "Buku Tulis";
   int hargaAnggota = 4500;
   int hargaUmum = 5000;
   int jumlahStok = 100;
-  bool tersedia = true;
+  bool tersedia = jumlahStok > 0;
 
-  // Tambahan sesuai soal
+  final rupiah = NumberFormat('#,###', 'id_ID');
+
+  print("=================================");
+  print("      KARTU DATA BARANG");
+  print("=================================");
+  print("Nama Barang   : $namaBarang");
+  print("Harga Anggota : Rp${rupiah.format(hargaAnggota)}");
+  print("Harga Umum    : Rp${rupiah.format(hargaUmum)}");
+  print("Jumlah Stok   : $jumlahStok");
+  print("Status        : ${tersedia ? "Tersedia" : "Habis"}");
+
+  // ============================
+  // PERHITUNGAN OPERATOR
+  // ============================
   int jumlah = 3;
   int totalAnggota = jumlah * hargaAnggota;
   int totalUmum = jumlah * hargaUmum;
   int selisih = totalUmum - totalAnggota;
 
-  print("===== KARTU DATA BARANG =====");
-  print("Nama Barang   : $namaBarang");
-  print("Harga Anggota : Rp$hargaAnggota");
-  print("Harga Umum    : Rp$hargaUmum");
-  print("Jumlah Stok   : $jumlahStok");
-  print("Tersedia      : $tersedia");
-  print("Total (anggota) $jumlah pcs : Rp$totalAnggota");
-  print("Selisih vs umum : Rp$selisih");
+  print("\n=================================");
+  print("      PERHITUNGAN OPERATOR");
+  print("=================================");
+  print("Jumlah Beli         : $jumlah pcs");
+  print("Total (Anggota)     : Rp${rupiah.format(totalAnggota)}");
+  print("Total (Umum)        : Rp${rupiah.format(totalUmum)}");
+  print("Selisih vs Umum     : Rp${rupiah.format(selisih)}");
 
+  // ============================
+  // IF ELSE & DISKON
+  // ============================
+  bool anggota = true;
+  int jumlahBeli = 40;
+
+  int harga;
+
+  if (anggota) {
+    harga = hargaAnggota;
+  } else {
+    harga = hargaUmum;
+  }
+
+  int total = jumlahBeli*harga;
+  double potongan = 0;
+
+  if (total > 200000) {
+    potongan = total * 0.10;
+  } else if (total > 100000) {
+    potongan = total * 0.05;
+  } else {
+    potongan = 0;
+  }
+
+  double hargaAkhir = total - potongan;
+
+  print("\n=================================");
+  print("     TRANSAKSI PEMBELIAN");
+  print("=================================");
+  print("Status Anggota : ${anggota ? "Ya" : "Tidak"}");
+  print("Harga Dipakai  : Rp${rupiah.format(harga)}");
+  print("Jumlah Beli    : $jumlahBeli pcs");
+  print("Total Belanja  : Rp${rupiah.format(total)}");
+  print("Potongan       : Rp${rupiah.format(potongan)}");
+  print("Harga Akhir    : Rp${rupiah.format(hargaAkhir)}");
+
+ // ============================
+// SWITCH CASE
+// ============================
+
+String kategori = "atk";
+String rak;
+
+// Switch-case lebih rapi karena hanya mengecek
+// satu variabel (kategori) dengan beberapa pilihan nilai.
+switch (kategori) {
+  case "atk":
+    rak = "Rak 1";
+    break;
+  case "makanan":
+    rak = "Rak 2";
+    break;
+  case "minuman":
+    rak = "Rak 3";
+    break;
+  default:
+    rak = "Rak lain";
+}
+
+print("\n=================================");
+print("     KATEGORI BARANG");
+print("=================================");
+print("Kategori      : $kategori");
+print("Letak Rak     : $rak");
   runApp(const MyApp());
 }
 
@@ -142,6 +223,3 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Pemilihan tipe data yang tepat penting agar data seperti harga, jumlah, dan stok
-// dapat diproses dengan benar. Hal ini membuat perhitungan total belanja menjadi
-// akurat dan mengurangi kesalahan pada transaksi kasir koperasi.
