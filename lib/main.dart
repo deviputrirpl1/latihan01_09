@@ -1,6 +1,16 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
+// Bahaya jika kondisi while keliru:
+// Program bisa terus berjalan tanpa berhenti (infinite loop)
+// atau stok menjadi minus karena penjualan tetap dilakukan
+// meskipun barang sudah habis.
+
+// Cara memastikan koperasi tidak menjual melebihi stok:
+// Gunakan kondisi while (stokBuku > 0) sehingga penjualan
+// hanya berlangsung selama stok masih tersedia dan berhenti
+// tepat saat stok mencapai 0.
+
 void main() {
    // ============================
   // DATA BARANG
@@ -103,6 +113,48 @@ print("     KATEGORI BARANG");
 print("=================================");
 print("Kategori      : $kategori");
 print("Letak Rak     : $rak");
+
+// ============================
+// DAFTAR BARANG
+// ============================
+
+List<String> daftarBarang = [
+  "Buku Tulis",
+  "Pulpen",
+  "Penghapus",
+  "Roti"
+];
+
+List<int> daftarHarga = [
+  3000,
+  2500,
+  1500,
+  5000
+];
+
+print("\n=================================");
+print("       DAFTAR BARANG");
+print("=================================");
+
+for (int i = 0; i < daftarBarang.length; i++) {
+  print("${i + 1}. ${daftarBarang[i]} - Rp${rupiah.format(daftarHarga[i])}");
+}
+
+// ============================
+// WHILE - PENJUALAN BARANG
+// ============================
+
+int stokBuku = 3;
+
+print("\n=================================");
+print("   PENJUALAN BUKU TULIS");
+print("=================================");
+
+while (stokBuku > 0) {
+  stokBuku--;
+  print("Terjual 1, sisa stok: $stokBuku");
+}
+
   runApp(const MyApp());
 }
 
