@@ -1,6 +1,13 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
+double hitungTotal(int jumlah, double harga) {
+  return jumlah * harga;
+}
+
+double hitungHargaAkhir(double total, double persenPotongan) {
+  return total - (total * persenPotongan / 100);
+}
 // Bahaya jika kondisi while keliru:
 // Program bisa terus berjalan tanpa berhenti (infinite loop)
 // atau stok menjadi minus karena penjualan tetap dilakukan
@@ -36,9 +43,10 @@ void main() {
   // PERHITUNGAN OPERATOR
   // ============================
   int jumlah = 3;
-  int totalAnggota = jumlah * hargaAnggota;
-  int totalUmum = jumlah * hargaUmum;
-  int selisih = totalUmum - totalAnggota;
+
+  double totalAnggota = hitungTotal(jumlah, hargaAnggota.toDouble());
+  double totalUmum = hitungTotal(jumlah, hargaUmum.toDouble());
+  double selisih = totalUmum - totalAnggota;
 
   print("\n=================================");
   print("      PERHITUNGAN OPERATOR");
@@ -62,18 +70,19 @@ void main() {
     harga = hargaUmum;
   }
 
-  int total = jumlahBeli*harga;
-  double potongan = 0;
+double total = hitungTotal(jumlahBeli, harga.toDouble());
+double persenPotongan = 0;
 
-  if (total > 200000) {
-    potongan = total * 0.10;
-  } else if (total > 100000) {
-    potongan = total * 0.05;
-  } else {
-    potongan = 0;
-  }
+if (total > 200000) {
+  persenPotongan = 10;
+} else if (total > 100000) {
+  persenPotongan = 5;
+} else {
+  persenPotongan = 0;
+}
 
-  double hargaAkhir = total - potongan;
+double hargaAkhir = hitungHargaAkhir(total, persenPotongan);
+double potongan = total - hargaAkhir;
 
   print("\n=================================");
   print("     TRANSAKSI PEMBELIAN");
