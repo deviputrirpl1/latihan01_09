@@ -37,6 +37,11 @@ class Barang {
     print("Kategori      : $kategori");
     print("Status        : ${stok > 0 ? "Tersedia" : "Habis"}");
   }
+
+  // Method untuk menghitung nilai seluruh stok
+ double nilaiStok() {
+  return hargaUmum.toDouble() * stok;
+}
 }
 
 // =====================================================
@@ -56,7 +61,6 @@ double hitungHargaAkhir(double total, double persenPotongan) {
 // =====================================================
 
 void main() {
-
   // ===================================================
   // 1. MEMBUAT OBJEK BARANG
   // ===================================================
@@ -102,13 +106,14 @@ void main() {
   // Menampilkan semua barang menggunakan perulangan
   for (Barang barang in daftarBarang) {
     barang.tampilkan();
+    print("Nilai Stok    : Rp${rupiah.format(barang.nilaiStok())}");
     print("----------------------------------------");
   }
 
   // Perbandingan dengan cara Sprint 3:
   // Pada Sprint 3, data barang masih disimpan dalam
-  // List yang terpisah seperti List<String> untuk nama
-  // dan List<int> untuk harga.
+  // List yang terpisah seperti List untuk nama
+  // dan List untuk harga.
   //
   // Sekarang menggunakan List<Barang>, sehingga data
   // nama, harga, stok, dan kategori berada dalam satu objek.
@@ -237,9 +242,7 @@ void main() {
   while (stokBuku > 0) {
     stokBuku--;
 
-    print(
-      "Terjual 1 pcs | Sisa stok: $stokBuku",
-    );
+    print("Terjual 1 pcs | Sisa stok: $stokBuku");
   }
 
   print("----------------------------------------");
@@ -330,9 +333,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-// Keuntungan memodelkan barang sebagai objek adalah data setiap barang
-// menjadi lebih rapi karena nama, harga, stok, dan kategori berada
-// dalam satu objek Barang. Jika sistem koperasi dikembangkan,
-// misalnya menambahkan diskon, supplier, atau transaksi,
-// fitur tersebut lebih mudah dikembangkan tanpa membuat banyak
-// variabel terpisah. Kode juga lebih mudah dirawat dan digunakan kembali.
+
+// Method nilaiStok() digunakan untuk menghitung nilai seluruh stok barang
+// berdasarkan harga umum dikalikan dengan jumlah stok.
+// Nilai ini berguna untuk mengetahui perkiraan nilai aset barang
+// yang masih dimiliki koperasi dan dapat digunakan dalam laporan aset.
