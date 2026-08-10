@@ -12,14 +12,12 @@ final rupiah = NumberFormat('#,###', 'id_ID');
 // =====================================================
 
 class Barang {
-  // Atribut
   String nama;
   int hargaAnggota;
   int hargaUmum;
   int stok;
   String kategori;
 
-  // Konstruktor
   Barang({
     required this.nama,
     required this.hargaAnggota,
@@ -28,7 +26,6 @@ class Barang {
     required this.kategori,
   });
 
-  // Method untuk menampilkan informasi barang
   void tampilkan() {
     print("Nama Barang   : $nama");
     print("Harga Anggota : Rp${rupiah.format(hargaAnggota)}");
@@ -38,10 +35,15 @@ class Barang {
     print("Status        : ${stok > 0 ? "Tersedia" : "Habis"}");
   }
 
-  // Method untuk menghitung nilai seluruh stok
- double nilaiStok() {
-  return hargaUmum.toDouble() * stok;
-}
+  double nilaiStok() {
+    return hargaUmum.toDouble() * stok;
+  }
+
+  // Method untuk mengecek apakah barang masih bisa dijual
+  // berdasarkan jumlah yang diminta dan stok yang tersedia.
+  bool bisaDijual(int diminta) {
+    return diminta > 0 && diminta <= stok;
+  }
 }
 
 // =====================================================
@@ -109,6 +111,19 @@ void main() {
     print("Nilai Stok    : Rp${rupiah.format(barang.nilaiStok())}");
     print("----------------------------------------");
   }
+
+print("\n========================================");
+print("         CEK KETERSEDIAAN PENJUALAN");
+print("========================================");
+
+int jumlahDiminta = 20;
+
+print("Barang       : ${bukuTulis.nama}");
+print("Stok         : ${bukuTulis.stok}");
+print("Diminta      : $jumlahDiminta pcs");
+print(
+  "Bisa Dijual  : ${bukuTulis.bisaDijual(jumlahDiminta) ? "Ya" : "Tidak"}",
+);
 
   // Perbandingan dengan cara Sprint 3:
   // Pada Sprint 3, data barang masih disimpan dalam
@@ -333,8 +348,15 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
+// hots 1
 // Method nilaiStok() digunakan untuk menghitung nilai seluruh stok barang
 // berdasarkan harga umum dikalikan dengan jumlah stok.
 // Nilai ini berguna untuk mengetahui perkiraan nilai aset barang
 // yang masih dimiliki koperasi dan dapat digunakan dalam laporan aset.
+
+//hots 2
+// Pengecekan diletakkan di dalam objek Barang agar aturan
+// penjualan dan stok menjadi tanggung jawab Barang itu sendiri.
+// Dengan begitu, setiap barang dapat mengecek stoknya sendiri,
+// kode lebih rapi, mudah digunakan kembali, dan mengurangi
+// pengulangan pengecekan di bagian program lain.
