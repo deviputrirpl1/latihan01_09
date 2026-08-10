@@ -330,3 +330,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+// Keuntungan memodelkan barang sebagai objek adalah data setiap barang
+// menjadi lebih rapi karena nama, harga, stok, dan kategori berada
+// dalam satu objek Barang. Jika sistem koperasi dikembangkan,
+// misalnya menambahkan diskon, supplier, atau transaksi,
+// fitur tersebut lebih mudah dikembangkan tanpa membuat banyak
+// variabel terpisah. Kode juga lebih mudah dirawat dan digunakan kembali.
