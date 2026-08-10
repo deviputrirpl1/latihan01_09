@@ -7,6 +7,17 @@ import 'package:intl/intl.dart';
 
 final rupiah = NumberFormat('#,###', 'id_ID');
 
+class Pembeli {
+  String nama;
+  bool anggota;
+
+  Pembeli({
+    required this.nama,
+    required this.anggota,
+  });
+}
+
+
 // =====================================================
 // CLASS BARANG
 // =====================================================
@@ -360,3 +371,9 @@ class _MyHomePageState extends State<MyHomePage> {
 // Dengan begitu, setiap barang dapat mengecek stoknya sendiri,
 // kode lebih rapi, mudah digunakan kembali, dan mengurangi
 // pengulangan pengecekan di bagian program lain.
+
+//hots 3
+// Relasi Pembeli dan Barang dalam transaksi adalah "membeli".
+// Satu Pembeli dapat membeli satu atau lebih Barang dalam satu transaksi.
+// Pembeli dan Barang tetap menjadi objek yang berdiri sendiri,
+// sedangkan transaksi menjadi penghubung antara Pembeli dan Barang.
