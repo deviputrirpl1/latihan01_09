@@ -56,6 +56,7 @@ double hitungHargaAkhir(double total, double persenPotongan) {
 // =====================================================
 
 void main() {
+
   // ===================================================
   // 1. MEMBUAT OBJEK BARANG
   // ===================================================
@@ -85,28 +86,40 @@ void main() {
   );
 
   // ===================================================
-  // DATA BARANG
+  // 2. LIST BARANG
   // ===================================================
+
+  List<Barang> daftarBarang = [
+    bukuTulis,
+    pulpen,
+    roti,
+  ];
 
   print("\n========================================");
-  print("             DATA BARANG");
+  print("             DAFTAR BARANG");
   print("========================================");
 
-  print("\n[Barang 1]");
-  bukuTulis.tampilkan();
+  // Menampilkan semua barang menggunakan perulangan
+  for (Barang barang in daftarBarang) {
+    barang.tampilkan();
+    print("----------------------------------------");
+  }
 
-  print("----------------------------------------");
-
-  print("[Barang 2]");
-  pulpen.tampilkan();
-
-  print("----------------------------------------");
-
-  print("[Barang 3]");
-  roti.tampilkan();
+  // Perbandingan dengan cara Sprint 3:
+  // Pada Sprint 3, data barang masih disimpan dalam
+  // List yang terpisah seperti List<String> untuk nama
+  // dan List<int> untuk harga.
+  //
+  // Sekarang menggunakan List<Barang>, sehingga data
+  // nama, harga, stok, dan kategori berada dalam satu objek.
+  // Cara ini lebih rapi dan mudah dikelola.
+  //
+  // Jika barang bertambah, cukup membuat objek Barang baru
+  // kemudian memasukkannya ke dalam List. Tidak perlu
+  // membuat List terpisah atau menampilkan barang satu per satu.
 
   // ===================================================
-  // 2. PERHITUNGAN OPERATOR
+  // 3. PERHITUNGAN OPERATOR
   // ===================================================
 
   int jumlah = 3;
@@ -133,7 +146,7 @@ void main() {
   print("Selisih         : Rp${rupiah.format(selisih)}");
 
   // ===================================================
-  // 3. TRANSAKSI & DISKON
+  // 4. TRANSAKSI & DISKON
   // ===================================================
 
   bool anggota = true;
@@ -181,7 +194,7 @@ void main() {
   print("Harga Akhir    : Rp${rupiah.format(hargaAkhir)}");
 
   // ===================================================
-  // 4. SWITCH CASE KATEGORI
+  // 5. SWITCH CASE KATEGORI
   // ===================================================
 
   String kategori = bukuTulis.kategori;
@@ -212,35 +225,6 @@ void main() {
   print("Letak Rak: $rak");
 
   // ===================================================
-  // 5. DAFTAR BARANG
-  // ===================================================
-
-  List<String> daftarBarang = [
-    "Buku Tulis",
-    "Pulpen",
-    "Penghapus",
-    "Roti",
-  ];
-
-  List<int> daftarHarga = [
-    3000,
-    2500,
-    1500,
-    5000,
-  ];
-
-  print("\n========================================");
-  print("            DAFTAR BARANG");
-  print("========================================");
-
-  for (int i = 0; i < daftarBarang.length; i++) {
-    print(
-      "${i + 1}. ${daftarBarang[i]} "
-      "- Rp${rupiah.format(daftarHarga[i])}",
-    );
-  }
-
-  // ===================================================
   // 6. WHILE - PENJUALAN BARANG
   // ===================================================
 
@@ -261,9 +245,16 @@ void main() {
   print("----------------------------------------");
   print("Penjualan berhenti karena stok habis.");
 
+  // ===================================================
+  // JALANKAN FLUTTER
+  // ===================================================
+
   runApp(const MyApp());
 }
 
+// =====================================================
+// FLUTTER APP
+// =====================================================
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -284,6 +275,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// =====================================================
+// HALAMAN UTAMA
+// =====================================================
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
