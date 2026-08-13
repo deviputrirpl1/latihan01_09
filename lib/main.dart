@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// =====================================================
-// FORMAT RUPIAH
-// =====================================================
-
 final rupiah = NumberFormat('#,###', 'id_ID');
+
+// =====================================================
+// CLASS PEMBELI
+// =====================================================
 
 class Pembeli {
   String nama;
@@ -25,10 +25,7 @@ class Barang {
   String nama;
   int hargaAnggota;
   int hargaUmum;
-
-  // Stok dibuat private agar tidak bisa diubah sembarangan
   int _stok;
-
   String kategori;
 
   Barang({
@@ -39,11 +36,10 @@ class Barang {
     required this.kategori,
   }) : _stok = stok;
 
-  // Getter untuk membaca stok
+  // Getter stok
   int get stok => _stok;
 
-  // Method jual untuk mengurangi stok
-  // Stok hanya akan berkurang jika jumlah yang diminta mencukupi.
+  // Method untuk proses penjualan
   bool jual(int n) {
     if (n > 0 && n <= _stok) {
       _stok -= n;
@@ -66,8 +62,6 @@ class Barang {
     return hargaUmum.toDouble() * stok;
   }
 
-  // Method untuk mengecek apakah barang masih bisa dijual
-  // berdasarkan jumlah yang diminta dan stok yang tersedia.
   bool bisaDijual(int diminta) {
     return diminta > 0 && diminta <= stok;
   }
@@ -95,21 +89,72 @@ class BarangPromo extends Barang {
           kategori: kategori,
         );
 
-  // Menghitung harga setelah mendapatkan diskon
   double hargaPromo() {
     return hargaUmum - (hargaUmum * diskon / 100);
+  }
+
+  @override
+  void tampilkan() {
+    print("Nama Barang   : $nama");
+    print("Status        : PROMO");
+    print("Harga Coret   : Rp${rupiah.format(hargaUmum)}");
+    print("Harga Promo   : Rp${rupiah.format(hargaPromo())}");
+    print("Diskon        : $diskon%");
+    print("Jumlah Stok   : $stok");
+    print("Kategori      : $kategori");
   }
 }
 
 // =====================================================
-// FUNGSI
+// CLASS BARANG GROSIR
+// =====================================================
+
+class BarangGrosir extends Barang {
+  double diskonGrosir;
+
+  BarangGrosir({
+    required String nama,
+    required int hargaAnggota,
+    required int hargaUmum,
+    required int stok,
+    required String kategori,
+    required this.diskonGrosir,
+  }) : super(
+          nama: nama,
+          hargaAnggota: hargaAnggota,
+          hargaUmum: hargaUmum,
+          stok: stok,
+          kategori: kategori,
+        );
+
+  double hargaGrosir() {
+    return hargaUmum - (hargaUmum * diskonGrosir / 100);
+  }
+
+  @override
+  void tampilkan() {
+    print("Nama Barang   : $nama");
+    print("Status        : GROSIR");
+    print("Harga Normal  : Rp${rupiah.format(hargaUmum)}");
+    print("Harga Grosir  : Rp${rupiah.format(hargaGrosir())}");
+    print("Diskon Grosir : $diskonGrosir%");
+    print("Jumlah Stok   : $stok");
+    print("Kategori      : $kategori");
+  }
+}
+
+// =====================================================
+// FUNGSI HITUNG TOTAL
 // =====================================================
 
 double hitungTotal(int jumlah, double harga) {
   return jumlah * harga;
 }
 
-double hitungHargaAkhir(double total, double persenPotongan) {
+double hitungHargaAkhir(
+  double total,
+  double persenPotongan,
+) {
   return total - (total * persenPotongan / 100);
 }
 
@@ -147,7 +192,7 @@ void main() {
   );
 
   // ===================================================
-  // 2. MEMBUAT OBJEK BARANG PROMO
+  // 2. BARANG PROMO
   // ===================================================
 
   BarangPromo promo = BarangPromo(
@@ -160,15 +205,32 @@ void main() {
   );
 
   print("\n========================================");
-  print("           BARANG PROMO");
+  print("             BARANG PROMO");
   print("========================================");
-  print("Nama Barang : ${promo.nama}");
-  print("Harga Asli  : Rp${rupiah.format(promo.hargaUmum)}");
-  print("Diskon      : ${promo.diskon}%");
-  print("Harga Promo : Rp${rupiah.format(promo.hargaPromo())}");
+
+  promo.tampilkan();
 
   // ===================================================
-  // 3. LIST BARANG
+  // 3. BARANG GROSIR
+  // ===================================================
+
+  BarangGrosir grosir = BarangGrosir(
+    nama: "Buku Tulis Grosir",
+    hargaAnggota: 4500,
+    hargaUmum: 5000,
+    stok: 50,
+    kategori: "atk",
+    diskonGrosir: 10,
+  );
+
+  print("\n========================================");
+  print("             BARANG GROSIR");
+  print("========================================");
+
+  grosir.tampilkan();
+
+  // ===================================================
+  // 4. LIST BARANG
   // ===================================================
 
   List<Barang> daftarBarang = [
@@ -181,65 +243,73 @@ void main() {
   print("             DAFTAR BARANG");
   print("========================================");
 
-  // Menampilkan semua barang menggunakan perulangan
   for (Barang barang in daftarBarang) {
     barang.tampilkan();
-    print("Nilai Stok    : Rp${rupiah.format(barang.nilaiStok())}");
+
+    print(
+      "Nilai Stok    : Rp${rupiah.format(barang.nilaiStok())}",
+    );
+
     print("----------------------------------------");
   }
 
-  print("\n========================================");
-  print("         CEK KETERSEDIAAN PENJUALAN");
-  print("========================================");
+  // ===================================================
+  // 5. CEK KETERSEDIAAN
+  // ===================================================
 
   int jumlahDiminta = 20;
+
+  print("\n========================================");
+  print("        CEK KETERSEDIAAN PENJUALAN");
+  print("========================================");
 
   print("Barang       : ${bukuTulis.nama}");
   print("Stok         : ${bukuTulis.stok}");
   print("Diminta      : $jumlahDiminta pcs");
+
   print(
-    "Bisa Dijual  : ${bukuTulis.bisaDijual(jumlahDiminta) ? "Ya" : "Tidak"}",
+    "Bisa Dijual  : "
+    "${bukuTulis.bisaDijual(jumlahDiminta) ? "Ya" : "Tidak"}",
   );
 
   // ===================================================
-  // ENKAPSULASI - TEST JUAL
+  // 6. TEST ENKAPSULASI
   // ===================================================
 
   print("\n========================================");
-  print("           TEST ENKAPSULASI");
+  print("            TEST ENKAPSULASI");
   print("========================================");
 
   print("Stok awal    : ${bukuTulis.stok}");
 
+  // Uji perubahan stok
+  bukuTulis._stok = 999;
+
+  print(
+    "Stok setelah diubah langsung: "
+    "${bukuTulis.stok}",
+  );
+
   bool penjualan1 = bukuTulis.jual(20);
 
   print(
-    "Jual 20 pcs  : ${penjualan1 ? "Berhasil" : "Gagal"}",
+    "Jual 20 pcs  : "
+    "${penjualan1 ? "Berhasil" : "Gagal"}",
   );
+
   print("Stok sekarang: ${bukuTulis.stok}");
 
   bool penjualan2 = bukuTulis.jual(200);
 
   print(
-    "Jual 200 pcs : ${penjualan2 ? "Berhasil" : "Gagal"}",
+    "Jual 200 pcs : "
+    "${penjualan2 ? "Berhasil" : "Gagal"}",
   );
+
   print("Stok sekarang: ${bukuTulis.stok}");
 
-  // Perbandingan dengan cara Sprint 3:
-  // Pada Sprint 3, data barang masih disimpan dalam
-  // List yang terpisah seperti List untuk nama
-  // dan List untuk harga.
-  //
-  // Sekarang menggunakan List<Barang>, sehingga data
-  // nama, harga, stok, dan kategori berada dalam satu objek.
-  // Cara ini lebih rapi dan mudah dikelola.
-  //
-  // Jika barang bertambah, cukup membuat objek Barang baru
-  // kemudian memasukkannya ke dalam List. Tidak perlu
-  // membuat List terpisah atau menampilkan barang satu per satu.
-
   // ===================================================
-  // 4. PERHITUNGAN OPERATOR
+  // 7. PERHITUNGAN OPERATOR
   // ===================================================
 
   int jumlah = 3;
@@ -257,64 +327,69 @@ void main() {
   double selisih = totalUmum - totalAnggota;
 
   print("\n========================================");
-  print("        PERHITUNGAN OPERATOR");
+  print("         PERHITUNGAN OPERATOR");
   print("========================================");
 
   print("Jumlah Beli     : $jumlah pcs");
-  print("Total Anggota   : Rp${rupiah.format(totalAnggota)}");
-  print("Total Umum      : Rp${rupiah.format(totalUmum)}");
-  print("Selisih         : Rp${rupiah.format(selisih)}");
-
-  // ===================================================
-  // 5. TRANSAKSI & DISKON
-  // ===================================================
-
-  bool anggota = true;
-  int jumlahBeli = 40;
-
-  int harga;
-
-  if (anggota) {
-    harga = bukuTulis.hargaAnggota;
-  } else {
-    harga = bukuTulis.hargaUmum;
-  }
-
-  double totalTransaksi = hitungTotal(
-    jumlahBeli,
-    harga.toDouble(),
+  print(
+    "Total Anggota   : "
+    "Rp${rupiah.format(totalAnggota)}",
   );
 
-  double persenPotongan;
-
-  if (totalTransaksi > 200000) {
-    persenPotongan = 10;
-  } else if (totalTransaksi > 100000) {
-    persenPotongan = 5;
-  } else {
-    persenPotongan = 0;
-  }
-
-  double hargaAkhir = hitungHargaAkhir(
-    totalTransaksi,
-    persenPotongan,
+  print(
+    "Total Umum      : "
+    "Rp${rupiah.format(totalUmum)}",
   );
 
-  double potongan = totalTransaksi - hargaAkhir;
+  print(
+    "Selisih         : "
+    "Rp${rupiah.format(selisih)}",
+  );
+
+  // ===================================================
+  // 8. FUNGSI PROSES BELI
+  // ===================================================
+
+  void prosesBeli(String inputJumlah) {
+    try {
+      // Mengubah input String menjadi angka
+      int jumlahBeli = int.parse(inputJumlah);
+
+      // Proses penjualan
+      bool berhasil = bukuTulis.jual(jumlahBeli);
+
+      if (berhasil) {
+        print("Penjualan berhasil.");
+        print("Jumlah terjual: $jumlahBeli");
+        print("Sisa stok: ${bukuTulis.stok}");
+      } else {
+        print("Penjualan gagal. Stok tidak mencukupi.");
+      }
+    } catch (e) {
+      // Jika input bukan angka
+      print(
+        "Input jumlah tidak valid. "
+        "Silakan masukkan angka dan coba lagi.",
+      );
+    } finally {
+      // Selalu dijalankan
+      print("Transaksi dicatat di log");
+    }
+  }
+
+  // ===================================================
+  // 9. TEST PROSES BELI
+  // ===================================================
 
   print("\n========================================");
-  print("         TRANSAKSI PEMBELIAN");
+  print("           TEST PROSES BELI");
   print("========================================");
 
-  print("Status Anggota : ${anggota ? "Ya" : "Tidak"}");
-  print("Harga Dipakai  : Rp${rupiah.format(harga)}");
-  print("Jumlah Beli    : $jumlahBeli pcs");
-  print("Total Belanja  : Rp${rupiah.format(totalTransaksi)}");
-  print("Potongan       : Rp${rupiah.format(potongan)}");
-  print("Harga Akhir    : Rp${rupiah.format(hargaAkhir)}");
+prosesBeli("2");
+prosesBeli("dua");
 
   // ===================================================
-  // 6. SWITCH CASE KATEGORI
+  // 10. SWITCH CASE KATEGORI
   // ===================================================
 
   String kategori = bukuTulis.kategori;
@@ -338,30 +413,11 @@ void main() {
   }
 
   print("\n========================================");
-  print("          KATEGORI BARANG");
+  print("           KATEGORI BARANG");
   print("========================================");
 
   print("Kategori : $kategori");
   print("Letak Rak: $rak");
-
-  // ===================================================
-  // 7. WHILE - PENJUALAN BARANG
-  // ===================================================
-
-  print("\n========================================");
-  print("         PENJUALAN BUKU TULIS");
-  print("========================================");
-
-  while (bukuTulis.stok > 0) {
-    bool berhasil = bukuTulis.jual(1);
-
-    if (berhasil) {
-      print("Terjual 1 pcs | Sisa stok: ${bukuTulis.stok}");
-    }
-  }
-
-  print("----------------------------------------");
-  print("Penjualan berhenti karena stok habis.");
 
   // ===================================================
   // JALANKAN FLUTTER
@@ -435,7 +491,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium,
             ),
           ],
         ),
@@ -448,36 +506,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-// hots 1
-// Method nilaiStok() digunakan untuk menghitung nilai seluruh stok barang
-// berdasarkan harga umum dikalikan dengan jumlah stok.
-// Nilai ini berguna untuk mengetahui perkiraan nilai aset barang
-// yang masih dimiliki koperasi dan dapat digunakan dalam laporan aset.
-
-// hots 2
-// Pengecekan diletakkan di dalam objek Barang agar aturan
-// penjualan dan stok menjadi tanggung jawab Barang itu sendiri.
-// Dengan begitu, setiap barang dapat mengecek stoknya sendiri,
-// kode lebih rapi, mudah digunakan kembali, dan mengurangi
-// pengulangan pengecekan di bagian program lain.
-
-// hots 3
-// Relasi Pembeli dan Barang dalam transaksi adalah "membeli".
-// Satu Pembeli dapat membeli satu atau lebih Barang dalam satu transaksi.
-// Pembeli dan Barang tetap menjadi objek yang berdiri sendiri,
-// sedangkan transaksi menjadi penghubung antara Pembeli dan Barang.
-
-// hots enkapsulasi
-// Enkapsulasi mencegah stok diubah sembarangan dengan menjadikan
-// variabel stok sebagai private (_stok). Stok tidak dapat diubah
-// secara langsung dari luar class, tetapi hanya dapat dikurangi
-// melalui method jual(int n). Method jual() akan mengecek apakah
-// jumlah stok mencukupi sebelum mengurangi stok.
-
-// Justifikasi
-// Melindungi _stok penting bagi integritas data koperasi karena
-// stok tidak dapat diubah sembarangan dari luar class.
-// Perubahan stok hanya dilakukan melalui method jual() yang
-// melakukan pengecekan terlebih dahulu. Dengan begitu, data stok
-// tetap akurat, konsisten, dan sesuai dengan transaksi penjualan.
