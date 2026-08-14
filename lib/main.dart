@@ -159,12 +159,32 @@ double hitungHargaAkhir(
 }
 
 // =====================================================
+// FUNGSI ASYNC MEMUAT LAPORAN
+// =====================================================
+
+Future<void> muatLaporan() async {
+  print("Menyiapkan laporan...");
+  await Future.delayed(Duration(seconds: 1));
+  print("Laporan siap!");
+}
+
+// =====================================================
 // PROGRAM UTAMA
 // =====================================================
 
-void main() {
+Future<void> main() async {
   // ===================================================
-  // 1. MEMBUAT OBJEK BARANG
+  // 1. MUAT LAPORAN
+  // ===================================================
+
+  print("\n========================================");
+  print("           MEMUAT LAPORAN");
+  print("========================================");
+
+  await muatLaporan();
+
+  // ===================================================
+  // 2. MEMBUAT DATA BARANG
   // ===================================================
 
   Barang bukuTulis = Barang(
@@ -192,7 +212,7 @@ void main() {
   );
 
   // ===================================================
-  // 2. BARANG PROMO
+  // 3. BARANG PROMO
   // ===================================================
 
   BarangPromo promo = BarangPromo(
@@ -211,7 +231,7 @@ void main() {
   promo.tampilkan();
 
   // ===================================================
-  // 3. BARANG GROSIR
+  // 4. BARANG GROSIR
   // ===================================================
 
   BarangGrosir grosir = BarangGrosir(
@@ -230,7 +250,7 @@ void main() {
   grosir.tampilkan();
 
   // ===================================================
-  // 4. LIST BARANG
+  // 5. TAMPILKAN DAFTAR BARANG
   // ===================================================
 
   List<Barang> daftarBarang = [
@@ -254,7 +274,7 @@ void main() {
   }
 
   // ===================================================
-  // 5. CEK KETERSEDIAAN
+  // 6. CEK KETERSEDIAAN
   // ===================================================
 
   int jumlahDiminta = 20;
@@ -273,7 +293,7 @@ void main() {
   );
 
   // ===================================================
-  // 6. TEST ENKAPSULASI
+  // 7. TEST ENKAPSULASI
   // ===================================================
 
   print("\n========================================");
@@ -282,7 +302,6 @@ void main() {
 
   print("Stok awal    : ${bukuTulis.stok}");
 
-  // Uji perubahan stok
   bukuTulis._stok = 999;
 
   print(
@@ -309,7 +328,7 @@ void main() {
   print("Stok sekarang: ${bukuTulis.stok}");
 
   // ===================================================
-  // 7. PERHITUNGAN OPERATOR
+  // 8. PERHITUNGAN HARGA
   // ===================================================
 
   int jumlah = 3;
@@ -327,69 +346,132 @@ void main() {
   double selisih = totalUmum - totalAnggota;
 
   print("\n========================================");
-  print("         PERHITUNGAN OPERATOR");
+  print("         PERHITUNGAN HARGA");
   print("========================================");
 
   print("Jumlah Beli     : $jumlah pcs");
   print(
-    "Total Anggota   : "
-    "Rp${rupiah.format(totalAnggota)}",
+    "Total Anggota   : Rp${rupiah.format(totalAnggota)}",
   );
-
   print(
-    "Total Umum      : "
-    "Rp${rupiah.format(totalUmum)}",
+    "Total Umum      : Rp${rupiah.format(totalUmum)}",
   );
-
   print(
-    "Selisih         : "
-    "Rp${rupiah.format(selisih)}",
+    "Selisih         : Rp${rupiah.format(selisih)}",
   );
 
   // ===================================================
-  // 8. FUNGSI PROSES BELI
+  // 9. PROSES TRANSAKSI UTAMA
   // ===================================================
 
-  void prosesBeli(String inputJumlah) {
+  void prosesTransaksi(
+    Pembeli pembeli,
+    Barang barang,
+    String inputJumlah,
+  ) {
     try {
-      // Mengubah input String menjadi angka
+      print("\n========================================");
+      print("           PROSES TRANSAKSI");
+      print("========================================");
+
+      // Mengubah input menjadi angka
       int jumlahBeli = int.parse(inputJumlah);
 
-      // Proses penjualan
-      bool berhasil = bukuTulis.jual(jumlahBeli);
+      // Menentukan harga berdasarkan status pembeli
+      double harga = pembeli.anggota
+          ? barang.hargaAnggota.toDouble()
+          : barang.hargaUmum.toDouble();
+
+      // Cek jumlah beli
+      if (jumlahBeli <= 0) {
+        print("Transaksi gagal.");
+        print("Jumlah beli harus lebih dari 0.");
+        return;
+      }
+
+      // Cek stok
+      if (jumlahBeli > barang.stok) {
+        print("Transaksi gagal.");
+        print(
+          "Jumlah beli ($jumlahBeli) melebihi stok "
+          "yang tersedia (${barang.stok}).",
+        );
+        return;
+      }
+
+      // Hitung total
+      double total = hitungTotal(jumlahBeli, harga);
+
+      // Potongan untuk anggota
+      double persenPotongan = pembeli.anggota ? 10 : 0;
+
+      double hargaAkhir = hitungHargaAkhir(
+        total,
+        persenPotongan,
+      );
+
+      double potongan = total - hargaAkhir;
+
+      // Kurangi stok
+      bool berhasil = barang.jual(jumlahBeli);
 
       if (berhasil) {
-        print("Penjualan berhasil.");
-        print("Jumlah terjual: $jumlahBeli");
-        print("Sisa stok: ${bukuTulis.stok}");
+        print("Pembeli        : ${pembeli.nama}");
+        print(
+          "Status         : "
+          "${pembeli.anggota ? "Anggota" : "Umum"}",
+        );
+        print("Barang         : ${barang.nama}");
+        print("Jumlah         : $jumlahBeli pcs");
+        print("Harga Satuan   : Rp${rupiah.format(harga)}");
+        print("Total          : Rp${rupiah.format(total)}");
+        print(
+          "Potongan       : Rp${rupiah.format(potongan)}",
+        );
+        print(
+          "Harga Akhir    : Rp${rupiah.format(hargaAkhir)}",
+        );
+        print("Sisa Stok      : ${barang.stok}");
+        print("Transaksi berhasil.");
       } else {
-        print("Penjualan gagal. Stok tidak mencukupi.");
+        print("Transaksi gagal.");
+        print("Stok tidak mencukupi.");
       }
     } catch (e) {
-      // Jika input bukan angka
-      print(
-        "Input jumlah tidak valid. "
-        "Silakan masukkan angka dan coba lagi.",
-      );
+      print("Input '$inputJumlah' bukan angka.");
+      print("Transaksi dibatalkan tanpa menghentikan program.");
     } finally {
-      // Selalu dijalankan
-      print("Transaksi dicatat di log");
+      print("Transaksi selesai diproses.");
     }
   }
 
   // ===================================================
-  // 9. TEST PROSES BELI
+  // 10. SATU TRANSAKSI
   // ===================================================
 
-  print("\n========================================");
-  print("           TEST PROSES BELI");
-  print("========================================");
+  Pembeli pembeli = Pembeli(
+    nama: "Devi",
+    anggota: true,
+  );
 
-prosesBeli("2");
-prosesBeli("dua");
+  // Salah input ditangani terlebih dahulu
+  print("\n--- Pengujian Salah Input ---");
+  prosesTransaksi(
+    pembeli,
+    bukuTulis,
+    "dua",
+  );
+
+  // Satu transaksi yang berhasil
+  print("\n--- Transaksi Utama ---");
+  prosesTransaksi(
+    pembeli,
+    bukuTulis,
+    "3",
+  );
 
   // ===================================================
-  // 10. SWITCH CASE KATEGORI
+  // 11. SWITCH CASE KATEGORI
   // ===================================================
 
   String kategori = bukuTulis.kategori;
@@ -418,6 +500,16 @@ prosesBeli("dua");
 
   print("Kategori : $kategori");
   print("Letak Rak: $rak");
+
+  // ===================================================
+  // 12. PROGRAM SELESAI
+  // ===================================================
+
+  print("\n========================================");
+  print("       PROGRAM KASIR SELESAI");
+  print("========================================");
+
+  print("Program tetap berjalan tanpa runtime error.");
 
   // ===================================================
   // JALANKAN FLUTTER
